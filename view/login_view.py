@@ -38,11 +38,11 @@ class LoginView(QWidget):
         self.botao_gerar_otp.clicked.connect(self.gerar_otp)
 
     def login(self):
-        cpf = self.campo_cpf.text()
+        cpf = self.campo_cpf.text().strip()
         senha = self.campo_senha.text()
-        otp = self.campo_otp.text()
+        otp = self.campo_otp.text().strip()
         self.controller.autenticar(cpf, senha, otp)
 
     def gerar_otp(self):
-        cpf = self.campo_cpf.text()
+        cpf = self.campo_cpf.text().strip()
         self.controller.gerar_otp(cpf)
