@@ -1,3 +1,4 @@
+# view/funcionario/relatorios_view.py
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton,
     QComboBox, QTableWidget, QTableWidgetItem, QDateEdit, QMessageBox
@@ -59,22 +60,32 @@ class RelatoriosView(QWidget):
         self.carregar_relatorios()
 
     def carregar_relatorios(self):
-        tipo = self.combo_tipo.currentData()
-        dt_inicio = self.data_inicio.date().toPyDate()
-        dt_fim = self.data_fim.date().toPyDate()
+    try:
+        contas, movimentacoes, scores = self.controller.obter_dados_relatórios()
 
-        if dt_inicio > dt_fim:
-            QMessageBox.warning(self, "Aviso", "Data inicial não pode ser maior que a final.")
-            return
+        # Carregar Resumo de Contas
+        self.tabela_contas.setColumnCount(len(contas[0]) if contas else 0)
+        self.tabela_contas.setRowCount(len(contas))
+        self.tabela_contas.setHorizontalHeaderLabels(contas[0].keys() if contas else [])
+        for i, conta in enumerate(contas):
+            for j, (key, value) in enumerate(conta.items()):
+                self.tabela_contas.setItem(i, j, QTableWidgetItem(str(value)))
 
-        try:
-            relatorios = self.controller.obter_relatorios(tipo, dt_inicio, dt_fim)
-            self.tabela.setRowCount(0)
-            for i, r in enumerate(relatorios):
-                self.tabela.insertRow(i)
-                self.tabela.setItem(i, 0, QTableWidgetItem(str(r['id_relatorio'])))
-                self.tabela.setItem(i, 1, QTableWidgetItem(r['tipo_relatorio']))
-                self.tabela.setItem(i, 2, QTableWidgetItem(str(r['data_geracao'])))
-                self.tabela.setItem(i, 3, QTableWidgetItem(r['conteudo'][:100] + "..."))  # mostra só os 100 primeiros caracteres
-        except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Erro ao carregar relatórios: {str(e)}")
+        # Carregar Movimentações
+        self.tabela_mov.setColumnCount(len(movimentacoes[0]) if movimentacoes else 0)
+        self.tabela_mov.setRowCount(len(movimentacoes))
+        self.tabela_mov.setHorizontalHeaderLabels(movimentacoes[0].keys() if movimentacoes else [])
+        for i, mov in enumerate(movimentacoes):
+            for j, (key, value) in enumerate(mov.items()):
+                self.tabela_mov.setItem(i, j, QTableWidgetItem(str(value)))
+
+        # Carregar Scores
+        self.tabela_scores.setColumnCount(len(scores[0]) if scores else 0)
+        self.tabela_scores.setRowCount(len(scores))
+        self.tabela_scores.setHorizontalHeaderLabels(scores[0].keys() if scores else [])
+        for i, sc in enumerate(scores):
+            for j, (key, value) in enumerate(sc.items()):
+                self.tabela_scores.setItem(i, j, QTableWidgetItem(str(value)))
+
+    except Exception as e:
+        QMessageBox.critical(self, "Erro", f"Erro ao carregar relatórios: {str(e)}")
