@@ -5,11 +5,13 @@ from view.funcionario.consulta_view import ConsultaView
 from view.funcionario.alteracao_view import AlteracaoView
 from view.funcionario.cadastro_funcionario_view import CadastroFuncionarioView
 from view.funcionario.relatorios_view import RelatoriosView
+from controller.relatorios_controller import RelatoriosController
 
 class FuncionarioView(QWidget):
-    def __init__(self, usuario):
+    def __init__(self, usuario, controller):
         super().__init__()
         self.usuario = usuario
+        self.controller = controller
         self.setWindowTitle(f"Funcionário - {usuario.nome}")
         self.setGeometry(100, 100, 400, 400)
         
@@ -45,11 +47,11 @@ class FuncionarioView(QWidget):
         self.btn_logout.clicked.connect(self.close)
 
     def abrir_abertura_conta(self):
-        self.abertura_view = AberturaContaView(self.usuario)
+        self.abertura_view = AberturaContaView(self.usuario, self.controller)
         self.abertura_view.show()
 
     def abrir_encerramento_conta(self):
-        self.encerramento_view = EncerramentoContaView(self.usuario)
+        self.encerramento_view = EncerramentoContaView(self.usuario)  
         self.encerramento_view.show()
 
     def abrir_consulta(self):
@@ -57,13 +59,14 @@ class FuncionarioView(QWidget):
         self.consulta_view.show()
 
     def abrir_alteracao(self):
-        self.alteracao_view = AlteracaoView(self.usuario)
+        self.alteracao_view = AlteracaoView(self.usuario, self.controller)
         self.alteracao_view.show()
 
     def abrir_cadastro(self):
-        self.cadastro_view = CadastroFuncionarioView(self.usuario)
+        self.cadastro_view = CadastroFuncionarioView(self.usuario, self.controller)
         self.cadastro_view.show()
 
     def abrir_relatorios(self):
-        self.relatorios_view = RelatoriosView(self.usuario)
+        relatorios_controller = RelatoriosController(self.usuario)
+        self.relatorios_view = RelatoriosView(self.usuario, relatorios_controller)
         self.relatorios_view.show()
