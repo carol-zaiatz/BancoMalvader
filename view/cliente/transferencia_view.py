@@ -1,41 +1,46 @@
 # view/cliente/transferencia_view.py
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QLineEdit, QPushButton, QMessageBox
+from dao.usuario_dao import transferir_valor
+from dao.transacao_dao import TransacaoDAO
 
 class TransferenciaView(QWidget):
     def __init__(self, usuario):
         super().__init__()
-        self.setWindowTitle("Transferência")
-        self.setGeometry(150, 150, 400, 250)
         self.usuario = usuario
+        self.setWindowTitle("Transferência")
+        self.setGeometry(100, 100, 400, 200)
+        self.init_ui()
 
+    def init_ui(self):
         layout = QVBoxLayout()
 
-        self.destino_input = QLineEdit()
-        self.destino_input.setPlaceholderText("Número da conta destino")
-        layout.addWidget(self.destino_input)
+        self.input_cpf_destino = QLineEdit()
+        self.input_cpf_destino.setPlaceholderText("CPF do destinatário")
+        layout.addWidget(self.input_cpf_destino)
 
-        self.valor_input = QLineEdit()
-        self.valor_input.setPlaceholderText("Valor da transferência")
-        layout.addWidget(self.valor_input)
+        self.input_valor = QLineEdit()
+        self.input_valor.setPlaceholderText("Valor a transferir")
+        layout.addWidget(self.input_valor)
 
-        self.descricao_input = QLineEdit()
-        self.descricao_input.setPlaceholderText("Descrição (opcional)")
-        layout.addWidget(self.descricao_input)
-
-        btn_enviar = QPushButton("Confirmar Transferência")
-        btn_enviar.clicked.connect(self.enviar_transferencia)
-        layout.addWidget(btn_enviar)
+        self.btn_transferir = QPushButton("Transferir")
+        self.btn_transferir.clicked.connect(self.realizar_transferencia)
+        layout.addWidget(self.btn_transferir)
 
         self.setLayout(layout)
 
-    def enviar_transferencia(self):
-        conta_destino = self.destino_input.text()
-        valor = self.valor_input.text()
-
-        if not conta_destino or not valor:
-            QMessageBox.warning(self, "Erro", "Preencha todos os campos obrigatórios.")
+    def realizar_transferencia(self):
+        cpf_destino = self.input_cpf_destino.text()
+        try:
+            valor = float(self.input_valor.text())
+        except ValueError:
+            QMessageBox.warning(self, "Erro", "Digite um valor válido.")
             return
 
-        # Aqui você chamaria o controller para processar a transferência
-        QMessageBox.information(self, "Sucesso", "Transferência realizada com sucesso.")
-        self.close()
+        if cpf_destino == self.usuario.cpf:
+            QMessageBox.warning(self, "Erro", "Não é possível transferir para si mesmo.")
+            return
+
+        resultado = transferir_valor(self.usuario.cpf, cpf_destino, valor)
+        QMessageBox.information(self, "Resultado", resultado)
+
+        
