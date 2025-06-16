@@ -1,8 +1,11 @@
-import mysql.connector
+from util.conexao import obter_conexao as conectar
 
 def buscar_relatorios(tipo_relatorio, data_inicio, data_fim):
-    conn = mysql.connector.connect(user='seu_user', password='sua_senha',
-                                   host='localhost', database='banco_malvader')
+    conn = conectar()
+    if not conn:
+        print("[ERRO] no controller: Não foi possível conectar ao banco de dados")
+        return []
+
     cursor = conn.cursor(dictionary=True)
 
     query = """

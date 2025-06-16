@@ -5,6 +5,7 @@ from view.funcionario.consulta_view import ConsultaView
 from view.funcionario.alteracao_view import AlteracaoView
 from view.funcionario.cadastro_funcionario_view import CadastroFuncionarioView
 from view.funcionario.relatorios_view import RelatoriosView
+from controller.relatorios_controller import RelatoriosController
 
 class FuncionarioView(QWidget):
     def __init__(self, usuario, controller):
@@ -50,11 +51,11 @@ class FuncionarioView(QWidget):
         self.abertura_view.show()
 
     def abrir_encerramento_conta(self):
-        self.encerramento_view = EncerramentoContaView(self.usuario, self.controller)
+        self.encerramento_view = EncerramentoContaView(self.usuario)  
         self.encerramento_view.show()
 
     def abrir_consulta(self):
-        self.consulta_view = ConsultaView(self.usuario, self.controller)
+        self.consulta_view = ConsultaView(self.usuario)
         self.consulta_view.show()
 
     def abrir_alteracao(self):
@@ -66,5 +67,6 @@ class FuncionarioView(QWidget):
         self.cadastro_view.show()
 
     def abrir_relatorios(self):
-        self.relatorios_view = RelatoriosView(self.usuario, self.controller)
+        relatorios_controller = RelatoriosController(self.usuario)
+        self.relatorios_view = RelatoriosView(self.usuario, relatorios_controller)
         self.relatorios_view.show()

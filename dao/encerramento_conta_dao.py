@@ -1,16 +1,29 @@
-import mysql.connector
+from util.conexao import obter_conexao as conectar
 
-def listar_contas_ativas(id_usuario):
-    conn = mysql.connector.connect(user='seu_user', password='sua_senha',
-                                   host='localhost', database='banco_malvader')
+def listar_contas_ativas(id_usuario, tipo_usuario):
+    conn = conectar()
+    if not conn:
+        print("[ERRO] no DAO: Não foi possível conectar ao banco de dados")
+        return []
+
     cursor = conn.cursor(dictionary=True)
-    query = """
-        SELECT c.id_conta, c.numero_conta, c.tipo_conta, c.saldo
-        FROM conta c
-        JOIN cliente cl ON c.id_cliente = cl.id_cliente
-        WHERE cl.id_usuario = %s AND c.status = 'ATIVA'
-    """
-    cursor.execute(query, (id_usuario,))
+
+    if tipo_usuario == 'FUNCIONARIO':
+        query = """
+            SELECT c.id_conta, c.numero_conta, c.tipo_conta, c.saldo
+            FROM conta c
+            WHERE c.status = 'ATIVA'
+        """
+        cursor.execute(query)
+    else:
+        query = """
+            SELECT c.id_conta, c.numero_conta, c.tipo_conta, c.saldo
+            FROM conta c
+            JOIN cliente cl ON c.id_cliente = cl.id_cliente
+            WHERE cl.id_usuario = %s AND c.status = 'ATIVA'
+        """
+        cursor.execute(query, (id_usuario,))
+
     contas = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -18,11 +31,12 @@ def listar_contas_ativas(id_usuario):
 
 def encerrar_conta_por_id(id_conta):
     try:
-        conn = mysql.connector.connect(user='seu_user', password='sua_senha',
-                                       host='localhost', database='banco_malvader')
-        cursor = conn.cursor()
+        conn = conectar()
+        if not conn:
+            print("[ERRO] no DAO: Não foi possível conectar ao banco de dados")
+            return False, "Erro na conexão com o banco."
 
-        # Verifica saldo da conta
+        cursor = conn.cursor()
         cursor.execute("SELECT saldo FROM conta WHERE id_conta = %s AND status = 'ATIVA'", (id_conta,))
         resultado = cursor.fetchone()
         if not resultado:
@@ -36,7 +50,6 @@ def encerrar_conta_por_id(id_conta):
             conn.close()
             return False, "Conta não pode ser encerrada com saldo diferente de zero."
 
-        # Atualiza status da conta para ENCERRADA
         cursor.execute("UPDATE conta SET status = 'ENCERRADA' WHERE id_conta = %s", (id_conta,))
         conn.commit()
         cursor.close()

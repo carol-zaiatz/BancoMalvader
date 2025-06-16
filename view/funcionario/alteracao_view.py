@@ -4,14 +4,13 @@ class AlteracaoView(QWidget):
     def __init__(self, usuario, controller):
         super().__init__()
         self.usuario = usuario
-        self.controller = controller  # Controller que gerencia atualizações no backend
+        self.controller = controller
         self.setWindowTitle("Alterar Dados")
         self.setGeometry(200, 200, 400, 300)
         layout = QVBoxLayout()
 
         layout.addWidget(QLabel(f"Usuário: {usuario.nome} (CPF: {usuario.cpf})"))
 
-        # Campos para alterar telefone e senha
         layout.addWidget(QLabel("Telefone:"))
         self.campo_telefone = QLineEdit()
         self.campo_telefone.setText(usuario.telefone)
@@ -26,7 +25,6 @@ class AlteracaoView(QWidget):
         layout.addWidget(self.botao_salvar)
 
         self.setLayout(layout)
-
         self.botao_salvar.clicked.connect(self.salvar_alteracoes)
 
     def salvar_alteracoes(self):
@@ -48,3 +46,4 @@ class AlteracaoView(QWidget):
             self.close()
         else:
             QMessageBox.warning(self, "Erro", f"Falha na atualização: {mensagem}")
+

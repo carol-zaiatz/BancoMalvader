@@ -37,11 +37,11 @@ class EncerramentoContaView(QWidget):
                 for conta in contas:
                     texto = f"Número: {conta['numero_conta']} | Tipo: {conta['tipo_conta']} | Saldo: R$ {conta['saldo']:.2f}"
                     item = QListWidgetItem(texto)
-                    # Guardar id da conta no item para referência
-                    item.setData(1000, conta['id_conta'])
+                    item.setData(1000, conta['id_conta'])  # custom role para guardar id
                     self.lista_contas.addItem(item)
+                self.btn_encerrar.setEnabled(True)
             else:
-                self.lista_contas.addItem("Nenhuma conta ativa encontrada.")
+                self.lista_contas.addItem(QListWidgetItem("Nenhuma conta ativa encontrada."))
                 self.btn_encerrar.setEnabled(False)
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao carregar contas: {str(e)}")

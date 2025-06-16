@@ -8,6 +8,7 @@ from view.cliente.cliente_view import ClienteView
 from view.funcionario.funcionario_view import FuncionarioView
 from hashlib import md5
 from PyQt5.QtWidgets import QMessageBox
+from controller.usuario_controller import UsuarioController
 
 class LoginController:
     def __init__(self, view):
@@ -28,7 +29,7 @@ class LoginController:
 
             QMessageBox.information(self.view, "Login", f"Bem-vindo, {usuario.nome}!")
             self.view.close()
-            limpar_otp(usuario.id)
+            limpar_otp(usuario.id_usuario)
 
             if usuario.tipo_usuario == "CLIENTE":
                 self.abrir_tela_cliente(usuario)
@@ -44,7 +45,8 @@ class LoginController:
 
         usuario = buscar_usuario_por_cpf(cpf)
         if usuario:
-            otp = chamar_procedure_gerar_otp(usuario.id)
+            otp = chamar_procedure_gerar_otp(usuario.id_usuario)
+
             if otp:
                 QMessageBox.information(self.view, "OTP Gerado", f"OTP: {otp} (válido por 5 minutos)")
             else:
@@ -57,5 +59,5 @@ class LoginController:
         self.cliente_view.show()
 
     def abrir_tela_funcionario(self, usuario):
-        self.funcionario_view = FuncionarioView(usuario)
+        self.funcionario_view = FuncionarioView(usuario, UsuarioController())
         self.funcionario_view.show()

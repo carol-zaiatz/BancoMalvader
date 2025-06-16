@@ -1,30 +1,29 @@
-# view/funcionario/relatorios_view.py
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton,
     QComboBox, QTableWidget, QTableWidgetItem, QDateEdit, QMessageBox
 )
 from PyQt5.QtCore import QDate
 from controller.relatorios_controller import RelatoriosController
+import pandas as pd
+from reportlab.platypus import SimpleDocTemplate, Table
 
 class RelatoriosView(QWidget):
-    def __init__(self, usuario):
+    def __init__(self, usuario, controller):
         super().__init__()
         self.usuario = usuario
-        self.controller = RelatoriosController(usuario)
+        self.controller = controller
 
         self.setWindowTitle(f"Relatórios - {usuario.nome}")
-        self.setGeometry(150, 150, 600, 400)
+        self.setGeometry(150, 150, 800, 500)
 
         main_layout = QVBoxLayout()
-
-        # Filtros
         filtro_layout = QHBoxLayout()
 
         filtro_layout.addWidget(QLabel("Tipo do Relatório:"))
         self.combo_tipo = QComboBox()
-        self.combo_tipo.addItem("Todos", "")
-        self.combo_tipo.addItem("Financeiro", "FINANCEIRO")
-        self.combo_tipo.addItem("Operacional", "OPERACIONAL")
+        self.combo_tipo.addItem("Movimentações", "MOVIMENTACOES")
+        self.combo_tipo.addItem("Inadimplência", "INADIMPLENCIA")
+        self.combo_tipo.addItem("Desempenho de Funcionários", "DESEMPENHO")
         filtro_layout.addWidget(self.combo_tipo)
 
         filtro_layout.addWidget(QLabel("Data Inicial:"))
@@ -40,52 +39,68 @@ class RelatoriosView(QWidget):
         filtro_layout.addWidget(self.data_fim)
 
         self.btn_filtrar = QPushButton("Filtrar")
+        self.btn_excel = QPushButton("Exportar Excel")
+        self.btn_pdf = QPushButton("Exportar PDF")
+
         filtro_layout.addWidget(self.btn_filtrar)
+        filtro_layout.addWidget(self.btn_excel)
+        filtro_layout.addWidget(self.btn_pdf)
 
         main_layout.addLayout(filtro_layout)
 
-        # Tabela de relatórios
         self.tabela = QTableWidget()
-        self.tabela.setColumnCount(4)
-        self.tabela.setHorizontalHeaderLabels(["ID", "Tipo", "Data Geração", "Conteúdo"])
-        self.tabela.setColumnWidth(3, 300)
         main_layout.addWidget(self.tabela)
 
         self.setLayout(main_layout)
 
-        # Conectar botão
         self.btn_filtrar.clicked.connect(self.carregar_relatorios)
+        self.btn_excel.clicked.connect(self.exportar_excel)
+        self.btn_pdf.clicked.connect(self.exportar_pdf)
 
-        # Carrega relatório inicial
         self.carregar_relatorios()
 
     def carregar_relatorios(self):
-    try:
-        contas, movimentacoes, scores = self.controller.obter_dados_relatórios()
+        try:
+            self.tipo = self.combo_tipo.currentData()
+            self.data_inicio_val = self.data_inicio.date().toPyDate()
+            self.data_fim_val = self.data_fim.date().toPyDate()
 
-        # Carregar Resumo de Contas
-        self.tabela_contas.setColumnCount(len(contas[0]) if contas else 0)
-        self.tabela_contas.setRowCount(len(contas))
-        self.tabela_contas.setHorizontalHeaderLabels(contas[0].keys() if contas else [])
-        for i, conta in enumerate(contas):
-            for j, (key, value) in enumerate(conta.items()):
-                self.tabela_contas.setItem(i, j, QTableWidgetItem(str(value)))
+            self.relatorios = self.controller.obter_relatorios(
+                self.tipo, self.data_inicio_val, self.data_fim_val
+            )
 
-        # Carregar Movimentações
-        self.tabela_mov.setColumnCount(len(movimentacoes[0]) if movimentacoes else 0)
-        self.tabela_mov.setRowCount(len(movimentacoes))
-        self.tabela_mov.setHorizontalHeaderLabels(movimentacoes[0].keys() if movimentacoes else [])
-        for i, mov in enumerate(movimentacoes):
-            for j, (key, value) in enumerate(mov.items()):
-                self.tabela_mov.setItem(i, j, QTableWidgetItem(str(value)))
+            if not self.relatorios:
+                self.tabela.setRowCount(0)
+                return
 
-        # Carregar Scores
-        self.tabela_scores.setColumnCount(len(scores[0]) if scores else 0)
-        self.tabela_scores.setRowCount(len(scores))
-        self.tabela_scores.setHorizontalHeaderLabels(scores[0].keys() if scores else [])
-        for i, sc in enumerate(scores):
-            for j, (key, value) in enumerate(sc.items()):
-                self.tabela_scores.setItem(i, j, QTableWidgetItem(str(value)))
+            headers = list(self.relatorios[0].keys())
+            self.tabela.setColumnCount(len(headers))
+            self.tabela.setHorizontalHeaderLabels(headers)
+            self.tabela.setRowCount(len(self.relatorios))
 
-    except Exception as e:
-        QMessageBox.critical(self, "Erro", f"Erro ao carregar relatórios: {str(e)}")
+            for i, row in enumerate(self.relatorios):
+                for j, key in enumerate(headers):
+                    self.tabela.setItem(i, j, QTableWidgetItem(str(row[key])))
+
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Erro ao carregar relatórios: {str(e)}")
+
+    def exportar_excel(self):
+        if not self.relatorios:
+            QMessageBox.warning(self, "Aviso", "Nenhum dado para exportar.")
+            return
+        df = pd.DataFrame(self.relatorios)
+        df.to_excel("relatorio.xlsx", index=False)
+        QMessageBox.information(self, "Sucesso", "Relatório exportado como Excel.")
+
+    def exportar_pdf(self):
+        if not self.relatorios:
+            QMessageBox.warning(self, "Aviso", "Nenhum dado para exportar.")
+            return
+
+        doc = SimpleDocTemplate("relatorio.pdf")
+        headers = list(self.relatorios[0].keys())
+        data = [headers] + [[str(item[col]) for col in headers] for item in self.relatorios]
+        table = Table(data)
+        doc.build([table])
+        QMessageBox.information(self, "Sucesso", "Relatório exportado como PDF.")
