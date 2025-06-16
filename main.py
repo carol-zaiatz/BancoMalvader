@@ -1,3 +1,4 @@
+# main.py
 from PyQt5.QtWidgets import QApplication
 from view.tipo_usuario_view import TipoUsuarioView
 import sys

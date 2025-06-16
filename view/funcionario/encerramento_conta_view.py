@@ -1,3 +1,4 @@
+# view/funcionario/encerramento_conta_view.py
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QListWidget, QListWidgetItem,
     QPushButton, QMessageBox

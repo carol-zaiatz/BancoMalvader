@@ -1,3 +1,4 @@
+# view/funcionario/funcionario_view.py
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel
 from view.funcionario.abertura_conta_view import AberturaContaView
 from view.funcionario.encerramento_conta_view import EncerramentoContaView
@@ -5,6 +6,7 @@ from view.funcionario.consulta_view import ConsultaView
 from view.funcionario.alteracao_view import AlteracaoView
 from view.funcionario.cadastro_funcionario_view import CadastroFuncionarioView
 from view.funcionario.relatorios_view import RelatoriosView
+from view.abrir_conta_view import AbrirContaView
 
 class FuncionarioView(QWidget):
     def __init__(self, usuario, controller):

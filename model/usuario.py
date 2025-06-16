@@ -1,3 +1,4 @@
+# model/usuario.py
 class Usuario:
     def __init__(self, id_usuario, nome, cpf, data_nascimento, telefone, tipo_usuario, senha_hash, otp_ativo=None, otp_expiracao=None):
         self.id = id_usuario

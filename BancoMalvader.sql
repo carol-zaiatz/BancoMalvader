@@ -221,3 +221,62 @@ JOIN conta c ON t.id_conta_origem = c.id_conta
 JOIN cliente cl ON c.id_cliente = cl.id_cliente
 JOIN usuario u ON cl.id_usuario = u.id_usuario
 WHERE t.data_hora >= NOW() - INTERVAL 90 DAY;
+
+DELIMITER $$
+CREATE PROCEDURE registrar_auditoria_conta(IN p_id_conta INT, IN p_acao VARCHAR(255))
+BEGIN
+    INSERT INTO auditoria_conta (id_conta, acao, data_hora)
+    VALUES (p_id_conta, p_acao, NOW());
+END$$
+DELIMITER ;
+
+CREATE TABLE auditoria_conta (
+    id_auditoria_conta INT AUTO_INCREMENT PRIMARY KEY,
+    id_conta INT,
+    acao VARCHAR(255) NOT NULL,
+    data_hora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_conta) REFERENCES conta(id_conta)
+);
+
+DELIMITER $$
+CREATE PROCEDURE abrir_conta(IN cpf_input VARCHAR(11), IN tipo_input ENUM('POUPANCA','CORRENTE','INVESTIMENTO'), IN saldo_input DECIMAL(15,2))
+BEGIN
+    DECLARE v_id_cliente INT;
+    DECLARE v_id_agencia INT;
+
+    SELECT cl.id_cliente INTO v_id_cliente
+    FROM cliente cl
+    JOIN usuario u ON cl.id_usuario = u.id_usuario
+    WHERE u.cpf = cpf_input;
+
+    SELECT id_agencia INTO v_id_agencia FROM agencia LIMIT 1;
+
+    INSERT INTO conta (numero_conta, id_agencia, saldo, tipo_conta, id_cliente)
+    VALUES (CONCAT('ACC', FLOOR(RAND() * 1000000)), v_id_agencia, saldo_input, tipo_input, v_id_cliente);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE atualizar_senha(IN p_id_usuario INT, IN nova_senha VARCHAR(32))
+BEGIN
+    -- Aqui idealmente você validaria também se a senha está no padrão correto (hash MD5/SHA).
+    UPDATE usuario
+    SET senha_hash = nova_senha
+    WHERE id_usuario = p_id_usuario;
+END$$
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE cadastrar_funcionario(
+    IN p_cpf VARCHAR(11),
+    IN p_nome VARCHAR(100),
+    IN p_senha_md5 CHAR(32),
+    IN p_cargo VARCHAR(20)
+)
+BEGIN
+    INSERT INTO usuario (cpf, nome, senha_hash, cargo)
+    VALUES (p_cpf, p_nome, p_senha_md5, p_cargo);
+END //
+
+DELIMITER ;

@@ -1,3 +1,4 @@
+# dao/consulta_dao.py
 import mysql.connector
 
 def obter_dados_usuario(id_usuario):

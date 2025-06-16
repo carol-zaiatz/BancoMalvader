@@ -1,3 +1,4 @@
+# dao/relatorios_dao.py
 import mysql.connector
 
 def buscar_relatorios(tipo_relatorio, data_inicio, data_fim):

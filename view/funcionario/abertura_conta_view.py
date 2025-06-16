@@ -1,3 +1,4 @@
+# view/funcionario/abertura_conta_view.py
 from PyQt5.QtWidgets import (QWidget, QLabel, QVBoxLayout, QLineEdit, QComboBox, 
                              QPushButton, QFormLayout, QMessageBox, QDateEdit, QDoubleSpinBox)
 from PyQt5.QtCore import QDate

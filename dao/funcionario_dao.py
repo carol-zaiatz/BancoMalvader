@@ -1,3 +1,4 @@
+# dao/funcionario_dao.py
 from util.conexao import obter_conexao
 from hashlib import md5
 

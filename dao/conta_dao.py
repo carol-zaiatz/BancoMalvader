@@ -2,6 +2,31 @@
 from util.conexao import obter_conexao  # Linha 1: Importa a função correta
 import random
 
+class ContaDAO:
+    def obter_saldo_consolidado(self, id_cliente):
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        query = "SELECT COALESCE(SUM(saldo),0) FROM conta WHERE id_cliente = %s"
+        cursor.execute(query, (id_cliente,))
+        saldo = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+        return saldo
+    
+def abrir_conta(self, cpf, tipo, saldo):
+    conn = obter_conexao()
+    cursor = conn.cursor()
+    try:
+        cursor.callproc('abrir_conta', (cpf, tipo, saldo))
+        conn.commit()
+        return True, ""
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
+    finally:
+        cursor.close()
+        conn.close()
+
 def inserir_cliente_e_conta(dados):
     """
     Insere um novo cliente e sua respectiva conta no banco de dados

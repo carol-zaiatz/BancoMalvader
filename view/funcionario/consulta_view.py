@@ -1,3 +1,4 @@
+# view/funcionario/consulta_view.py
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QListWidget, QListWidgetItem, QMessageBox
 from controller.consulta_controller import ConsultaController
 

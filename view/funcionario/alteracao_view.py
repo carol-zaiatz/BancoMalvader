@@ -1,3 +1,4 @@
+# view/funcionario/alteracao_view.py
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QLineEdit, QPushButton, QMessageBox
 
 class AlteracaoView(QWidget):

@@ -1,3 +1,4 @@
+# controller/consulta_controller.py
 from dao.consulta_dao import obter_dados_usuario, obter_contas_usuario
 
 class ConsultaController:

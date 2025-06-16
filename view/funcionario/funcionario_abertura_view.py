@@ -1,3 +1,4 @@
+# view/funcionario/funcionario_abertura_view.py
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QVBoxLayout, QComboBox,
     QLineEdit, QPushButton, QMessageBox

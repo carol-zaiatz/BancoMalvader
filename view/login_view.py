@@ -1,3 +1,4 @@
+# view/login_view.py
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
 from controller.login_controller import LoginController
 

@@ -1,3 +1,4 @@
+# dao/abertura_conta_dao.py
 import mysql.connector
 
 def listar_clientes():

@@ -1,3 +1,4 @@
+# view/tipo_usuario_view.py
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel
 from view.login_view import LoginView
 

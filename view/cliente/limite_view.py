@@ -1,5 +1,6 @@
 # view/cliente/limite_view.py
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
+from dao.usuario_dao import consultar_limite
 
 class LimiteView(QWidget):
     def __init__(self, usuario):
@@ -10,11 +11,17 @@ class LimiteView(QWidget):
 
         layout = QVBoxLayout()
 
-        # Dados simulados, que viriam do controller com base no score
-        limite_atual = "R$ 2.000,00"
-        previsao_aumento = "R$ 3.000,00 (com score acima de 80)"
+        cpf = usuario.cpf
+        limite_atual = consultar_limite(cpf)
 
-        layout.addWidget(QLabel(f"Limite atual: {limite_atual}"))
-        layout.addWidget(QLabel(f"Previsão de aumento: {previsao_aumento}"))
+        if limite_atual >= 3000:
+            previsao = "R$ 4.500,00 (com score acima de 90)"
+        elif limite_atual >= 2000:
+            previsao = "R$ 3.000,00 (com score acima de 80)"
+        else:
+            previsao = "R$ 2.000,00 (com score acima de 70)"
+
+        layout.addWidget(QLabel(f"Limite atual: R$ {limite_atual:,.2f}"))
+        layout.addWidget(QLabel(f"Previsão de aumento: {previsao}"))
 
         self.setLayout(layout)

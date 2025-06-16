@@ -1,9 +1,11 @@
 # view/cliente/cliente_view.py
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QPushButton
-from .saldo_view import SaldoView
+# from .saldo_view import SaldoView
 from .transferencia_view import TransferenciaView
-from .extrato_view import ExtratoView
+from .extrato_view import ExtratoClienteView
 from .limite_view import LimiteView
+# from view.cliente.extrato_view import ExtratoView
+from .saldo_view import SaldoClienteView
 
 class ClienteView(QWidget):
     def __init__(self, usuario):
@@ -35,20 +37,39 @@ class ClienteView(QWidget):
         btn_sair.clicked.connect(self.close)
         layout.addWidget(btn_sair)
 
+        btn_extrato.clicked.connect(self.abrir_extrato)
+
+        btn_saldo.clicked.connect(self.abrir_saldo)
+
+        btn_transferencia.clicked.connect(self.abrir_transferencia)
+
         self.setLayout(layout)
 
-    def abrir_saldo(self):
-        self.saldo_view = SaldoView(self.usuario)
-        self.saldo_view.show()
+def abrir_saldo(self):
+    self.saldo_view = SaldoClienteView(self.usuario.cpf, self.show)
+    self.saldo_view.show()
+    self.hide()
 
     def abrir_transferencia(self):
         self.transf_view = TransferenciaView(self.usuario)
         self.transf_view.show()
 
     def abrir_extrato(self):
-        self.extrato_view = ExtratoView(self.usuario)
+        self.extrato_view = ExtratoClienteView(self.usuario)
         self.extrato_view.show()
 
     def abrir_limite(self):
         self.limite_view = LimiteView(self.usuario)
         self.limite_view.show()
+
+    def abrir_extrato(self):
+        self.extrato_window = ExtratoClienteView(self.id_cliente)
+        self.extrato_window.show()
+
+    def abrir_saldo(self):
+       self.saldo_window = SaldoClienteView(self.id_cliente)
+       self.saldo_window.show()
+
+    def abrir_transferencia(self):
+       self.transferencia_window = TransferenciaView(self.id_cliente)
+       self.transferencia_window.show()

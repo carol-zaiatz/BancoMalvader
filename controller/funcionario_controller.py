@@ -1,3 +1,4 @@
+# controller/funcionario_controller.py
 from dao.funcionario_dao import inserir_funcionario_completo
 
 class FuncionarioController:

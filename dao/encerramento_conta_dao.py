@@ -1,3 +1,4 @@
+# dao/encerramento_conta_dao.py
 import mysql.connector
 
 def listar_contas_ativas(id_usuario):

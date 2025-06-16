@@ -1,3 +1,4 @@
+# view/funcionario/cadastro_funcionario_view.py
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QLineEdit, QPushButton, QComboBox, QMessageBox
 
 class CadastroFuncionarioView(QWidget):
